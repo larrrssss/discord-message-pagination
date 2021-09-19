@@ -74,7 +74,7 @@ interface Options {
 
 Set your `DISCORD_BOT_TOKEN` to your `.env`.
 
-```ssg-session
+```sh-session
 cp .env.sample .env
 
 npm run test:bot
