@@ -69,3 +69,13 @@ interface Options {
   content?: string,
 }
 ```
+
+## Local test
+
+Set your `DISCORD_BOT_TOKEN` to your `.env`.
+
+```ssg-session
+cp .env.sample .env
+
+npm run test:bot
+```
