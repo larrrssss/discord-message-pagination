@@ -14,13 +14,12 @@ client.on('interactionCreate', async (interaction) => {
     return;
 
   const options = {
-    onPageChange: (i, embed) => embed.setTitle(`Embed #${i}`),
-    content: 'Hallo Welt'
+    onPageChange: (i, embed) => embed.setTitle(`This is embed #${i}`),
   } as Options;
 
   await sendPaginatedEmbed(
     interaction, 
-    new MessageEmbed().setTitle('WOW'), 
+    new MessageEmbed().setTitle('My initial embed'), 
     options,
   );
 });
