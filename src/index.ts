@@ -85,7 +85,7 @@ export async function sendPaginatedEmbed(
 
     const newEmbed = Array.isArray(payload)
       ? payload[i]
-      : await options.onPageChange(i, payload);
+      : await options.onPageChange(collectedInteraction.customId.split('_')[0], payload);
 
     if (!newEmbed)
       throw new Error('Error creating new embed. Make sure to return a MessageEmbed');
@@ -94,10 +94,7 @@ export async function sendPaginatedEmbed(
   });
 
   collector.on('end', async () => {
-    if (!message.editable)
-      return;
-
-    await message.edit({ components: [] });
+    await interaction.editReply({ components: [] });
   });
 
   return message;

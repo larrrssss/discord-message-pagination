@@ -20,7 +20,7 @@ export interface Options {
   /**
    * Function which will run if the page changed. Only if second argument is not an array. 
    */
-  onPageChange?: (pageNumber: number, embed: MessageEmbed) => MessageEmbed | Promise<MessageEmbed>,
+  onPageChange?: (event: 'next' | 'previous' | string, embed: MessageEmbed) => MessageEmbed | Promise<MessageEmbed>,
   /**
    * Message content
    */

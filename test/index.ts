@@ -13,8 +13,15 @@ client.on('interactionCreate', async (interaction) => {
   if (!interaction.isCommand())
     return;
 
+  let i = 1;
   const options = {
-    onPageChange: (i, embed) => embed.setTitle(`This is embed #${i}`),
+    onPageChange: (event, embed) => {
+      i = event === 'next' 
+        ? i + 1 
+        : i - 1;
+      return embed.setTitle(`This is embed #${i}`);
+    },
+    time: 10 * 1000,
   } as Options;
 
   await sendPaginatedEmbed(
