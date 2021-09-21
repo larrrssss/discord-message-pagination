@@ -90,7 +90,9 @@ export async function sendPaginatedEmbed(
   });
 
   collector.on('end', async () => {
-    await interaction.editReply({ components: [] });
+    await interaction.editReply({ components: [] })
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      .catch(() => {});
   });
 
   return message;
