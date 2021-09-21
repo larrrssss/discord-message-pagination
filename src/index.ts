@@ -79,13 +79,9 @@ export async function sendPaginatedEmbed(
     if (collectedInteraction.customId === 'previous_button')
       i--;
 
-    // Only to avoid typescript error
-    if (!options?.onPageChange)
-      return;
-
     const newEmbed = Array.isArray(payload)
       ? payload[i]
-      : await options.onPageChange(collectedInteraction.customId.split('_')[0], payload);
+      : options && options.onPageChange ? await options.onPageChange(collectedInteraction.customId.split('_')[0], payload) : undefined;    
 
     if (!newEmbed)
       throw new Error('Error creating new embed. Make sure to return a MessageEmbed');
