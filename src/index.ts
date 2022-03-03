@@ -51,7 +51,7 @@ export async function sendPaginatedEmbed(
     
     return {
       embeds: [embed || (Array.isArray(payload) ? payload[i] : payload)],
-      components: [row],
+      components: [...(options?.components || []), row],
       content: options?.content ?? undefined,
     };
   }

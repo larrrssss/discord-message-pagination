@@ -1,4 +1,4 @@
-import { InteractionButtonOptions, MessageEmbed } from 'discord.js';
+import { InteractionButtonOptions, MessageActionRow, MessageEmbed } from 'discord.js';
 
 export interface Options {
   /**
@@ -25,4 +25,8 @@ export interface Options {
    * Message content
    */
   content?: string,
+  /**
+   * Add custom components to render above the pagination buttons
+   */
+  components?: MessageActionRow[]
 }
