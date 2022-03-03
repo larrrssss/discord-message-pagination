@@ -69,7 +69,7 @@ export async function sendPaginatedEmbed(
   });
 
   collector.on('collect', async (collectedInteraction) => {
-    if (!collectedInteraction.isButton())
+    if (!collectedInteraction.isButton() || !['next_button', 'previous_button'].includes(collectedInteraction.customId))
       return;
 
     // Check restriction
