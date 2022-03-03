@@ -1,4 +1,4 @@
-import { InteractionButtonOptions, MessageActionRow, MessageEmbed } from 'discord.js';
+import { GuildMember, InteractionButtonOptions, MessageActionRow, MessageEmbed } from 'discord.js';
 
 export interface Options {
   /**
@@ -28,5 +28,9 @@ export interface Options {
   /**
    * Add custom components to render above the pagination buttons
    */
-  components?: MessageActionRow[]
+  components?: MessageActionRow[],
+  /**
+   * Specifiy a restriction for pagination buttons
+   */
+  restriction?: 'ALL' | 'AUTHOR' | ((member: GuildMember) => boolean | Promise<boolean>),
 }

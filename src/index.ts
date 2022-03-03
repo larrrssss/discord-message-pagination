@@ -1,5 +1,6 @@
 import { 
   CommandInteraction,
+  GuildMember,
   InteractionCollector,
   Message,
   MessageActionRow,
@@ -70,6 +71,18 @@ export async function sendPaginatedEmbed(
   collector.on('collect', async (collectedInteraction) => {
     if (!collectedInteraction.isButton())
       return;
+
+    // Check restriction
+    if (options?.restriction && options?.restriction !== 'ALL') {
+      if (options.restriction === 'AUTHOR' && collectedInteraction.user.id !== interaction.user.id)
+        return;
+
+      if (typeof options.restriction === 'function') {
+        const result = await options.restriction(interaction.member as GuildMember);
+        if (!result)
+          return;
+      }
+    }
     
     await collectedInteraction.deferUpdate();
 
