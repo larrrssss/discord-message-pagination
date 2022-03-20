@@ -33,4 +33,8 @@ export interface Options {
    * Specifiy a restriction for pagination buttons
    */
   restriction?: 'ALL' | 'AUTHOR' | ((member: GuildMember) => boolean | Promise<boolean>),
+  /**
+   * Set a start index. Default index is 0
+   */
+  startIndex?: number
 }

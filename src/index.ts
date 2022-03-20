@@ -18,7 +18,7 @@ export async function sendPaginatedEmbed(
   payload: MessageEmbed | MessageEmbed[],
   options?: Options,
 ): Promise<Message> {
-  let i = 0;
+  let i = options?.startIndex || 0;
   const buttonStyle = options?.style ?? 'SECONDARY';
 
   if (interaction.replied)
@@ -26,6 +26,9 @@ export async function sendPaginatedEmbed(
 
   if (!Array.isArray(payload) && !options?.onPageChange) 
     throw new Error('onPageChange should be defined if payload is not an array');
+
+  if (Array.isArray(payload) && (i < 0 || i > payload.length - 1))
+    throw new Error('startIndex not in array range');
 
   function buildMessageOptions(embed?: MessageEmbed) {
     const nextButton = new MessageButton()
