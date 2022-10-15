@@ -1,4 +1,4 @@
-import { GuildMember, InteractionButtonOptions, MessageActionRow, MessageEmbed } from 'discord.js';
+import { GuildMember, ButtonStyle, ActionRowBuilder, EmbedBuilder } from 'discord.js';
 
 export interface Options {
   /**
@@ -16,11 +16,11 @@ export interface Options {
   /**
    * Button style
    */
-  style?: InteractionButtonOptions['style'],
+  style?: ButtonStyle,
   /**
    * Function which will run if the page changed. Only if second argument is not an array. 
    */
-  onPageChange?: (event: 'next' | 'previous' | string, embed: MessageEmbed) => MessageEmbed | Promise<MessageEmbed>,
+  onPageChange?: (event: 'next' | 'previous' | string, embed: EmbedBuilder) => EmbedBuilder | Promise<EmbedBuilder>,
   /**
    * Message content
    */
@@ -28,7 +28,7 @@ export interface Options {
   /**
    * Add custom components to render above the pagination buttons
    */
-  components?: MessageActionRow[],
+  components?: ActionRowBuilder<any>[],
   /**
    * Specifiy a restriction for pagination buttons
    */

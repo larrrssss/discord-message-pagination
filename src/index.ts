@@ -3,9 +3,11 @@ import {
   GuildMember,
   InteractionCollector,
   Message,
-  MessageActionRow,
-  MessageButton,
-  MessageEmbed,
+  ActionRowBuilder,
+  ButtonBuilder,
+  EmbedBuilder,
+  ButtonStyle,
+  ComponentType,
 } from 'discord.js';
 
 import { Options } from './types';
@@ -15,11 +17,11 @@ const defaultTimeout = 10 * 60 * 1000;
 
 export async function sendPaginatedEmbed(
   interaction: CommandInteraction,
-  payload: MessageEmbed | MessageEmbed[],
+  payload: EmbedBuilder | EmbedBuilder[],
   options?: Options,
 ): Promise<Message> {
   let i = options?.startIndex || 0;
-  const buttonStyle = options?.style ?? 'SECONDARY';
+  const buttonStyle = options?.style ?? ButtonStyle.Secondary;
 
   if (interaction.replied)
     throw new Error('You already replied to this interaction');
@@ -30,24 +32,24 @@ export async function sendPaginatedEmbed(
   if (Array.isArray(payload) && (i < 0 || i > payload.length - 1))
     throw new Error('startIndex not in array range');
 
-  function buildMessageOptions(embed?: MessageEmbed) {
-    const nextButton = new MessageButton()
+  function buildMessageOptions(embed?: EmbedBuilder) {
+    const nextButton = new ButtonBuilder()
       .setLabel(options?.nextLabel ?? '▶️')
       .setCustomId('next_button')
       .setStyle(buttonStyle);
 
     if (Array.isArray(payload) && i === payload.length - 1) 
-      nextButton.disabled = true;
+      nextButton.setDisabled(true);
 
-    const previousButton = new MessageButton()
+    const previousButton = new ButtonBuilder()
       .setLabel(options?.previousLabel ?? '◀️')
       .setCustomId('previous_button')
       .setStyle(buttonStyle);
     
     if (Array.isArray(payload) && i === 0)
-      previousButton.disabled = true;
+      previousButton.setDisabled(true);
 
-    const row = new MessageActionRow()
+    const row = new ActionRowBuilder<ButtonBuilder>()
       .addComponents([ previousButton, nextButton ]);
 
     if (Array.isArray(payload) && !payload[i])
@@ -67,7 +69,7 @@ export async function sendPaginatedEmbed(
 
   const collector = new InteractionCollector(interaction.client, { 
     message,
-    componentType: 'BUTTON',
+    componentType: ComponentType.Button,
     time: options?.time ?? defaultTimeout,
   });
 

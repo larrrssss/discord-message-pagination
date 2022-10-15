@@ -1,9 +1,9 @@
 import 'dotenv/config';
-import { Client, Intents, MessageEmbed } from 'discord.js';
+import { Client, EmbedBuilder } from 'discord.js';
 
 import { sendPaginatedEmbed, Options } from '../src/index';
 
-const client = new Client({ intents: [Intents.FLAGS.GUILD_MESSAGES] });
+const client = new Client({ intents: ['Guilds'] });
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user?.tag}`);
@@ -26,7 +26,7 @@ client.on('interactionCreate', async (interaction) => {
 
   await sendPaginatedEmbed(
     interaction, 
-    new MessageEmbed().setTitle('My initial embed'), 
+    new EmbedBuilder().setTitle('My initial embed'), 
     options,
   );
 });
