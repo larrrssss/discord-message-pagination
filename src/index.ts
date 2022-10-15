@@ -8,6 +8,8 @@ import {
   EmbedBuilder,
   ButtonStyle,
   ComponentType,
+  TextChannel,
+  User,
 } from 'discord.js';
 
 import { Options } from './types';
@@ -16,14 +18,17 @@ import { Options } from './types';
 const defaultTimeout = 10 * 60 * 1000;
 
 export async function sendPaginatedEmbed(
-  interaction: CommandInteraction,
+  target: CommandInteraction | TextChannel | User | GuildMember,
   payload: EmbedBuilder | EmbedBuilder[],
   options?: Options,
 ): Promise<Message> {
   let i = options?.startIndex || 0;
   const buttonStyle = options?.style ?? ButtonStyle.Secondary;
+  const targetUserId = target instanceof CommandInteraction
+    ? target.user.id
+    : target.id;
 
-  if (interaction.replied)
+  if (target instanceof CommandInteraction && target.replied)
     throw new Error('You already replied to this interaction');
 
   if (!Array.isArray(payload) && !options?.onPageChange) 
@@ -62,12 +67,21 @@ export async function sendPaginatedEmbed(
     };
   }
 
-  const messageOptions = { ...buildMessageOptions(), fetchReply: true };
-  const message = (interaction.deferred
-    ? (await interaction.followUp(messageOptions))
-    : (await interaction.reply(messageOptions))) as Message;
+  let message: Message;
+  try {
+    const messageOptions = { ...buildMessageOptions(), fetchReply: true };
+    if (target instanceof CommandInteraction)
+      message = (target.deferred
+        ? await target.editReply(messageOptions) as Message
+        : await target.reply(messageOptions)) as Message;
+    else {
+      message = await target.send(messageOptions);
+    }
+  } catch (e) {
+    throw new Error('Error sending initial message. Maybe the user disabled direct messages or missing permission for the given channel');
+  }
 
-  const collector = new InteractionCollector(interaction.client, { 
+  const collector = new InteractionCollector(target.client, { 
     message,
     componentType: ComponentType.Button,
     time: options?.time ?? defaultTimeout,
@@ -79,11 +93,11 @@ export async function sendPaginatedEmbed(
 
     // Check restriction
     if (options?.restriction && options?.restriction !== 'ALL') {
-      if (options.restriction === 'AUTHOR' && collectedInteraction.user.id !== interaction.user.id)
+      if (options.restriction === 'AUTHOR' && collectedInteraction.user.id !== targetUserId)
         return;
 
       if (typeof options.restriction === 'function') {
-        const result = await options.restriction(interaction.member as GuildMember);
+        const result = await options.restriction(collectedInteraction.member as GuildMember);
         if (!result)
           return;
       }
@@ -108,9 +122,14 @@ export async function sendPaginatedEmbed(
   });
 
   collector.on('end', async () => {
-    await interaction.editReply({ components: [] })
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      .catch(() => {});
+    if (target instanceof CommandInteraction)
+      await target.editReply({ components: [] })
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        .catch(() => {});
+    else 
+      await message.edit({ components: [] })
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        .catch(() => {});
   });
 
   return message;
