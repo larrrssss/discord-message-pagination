@@ -37,6 +37,9 @@ export async function sendPaginatedEmbed(
   if (Array.isArray(payload) && (i < 0 || i > payload.length - 1))
     throw new Error('startIndex not in array range');
 
+  if (options?.components && (!Array.isArray(options.components) || options.components.length > 4))
+    throw new Error('options.components must be an array with length less than 4');
+
   function buildMessageOptions(embed?: EmbedBuilder) {
     const nextButton = new ButtonBuilder()
       .setLabel(options?.nextLabel ?? '▶️')
@@ -123,11 +126,11 @@ export async function sendPaginatedEmbed(
 
   collector.on('end', async () => {
     if (target instanceof CommandInteraction)
-      await target.editReply({ components: [] })
+      await target.editReply({ components: options?.components ?? [] })
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         .catch(() => {});
     else 
-      await message.edit({ components: [] })
+      await message.edit({ components: options?.components ?? [] })
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         .catch(() => {});
   });
