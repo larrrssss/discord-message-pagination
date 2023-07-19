@@ -36,5 +36,9 @@ export interface Options {
   /**
    * Set a start index. Default index is 0
    */
-  startIndex?: number
+  startIndex?: number,  
+  /**
+   * Send ephemeral response
+   */
+  ephemeral?: boolean
 }
