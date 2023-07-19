@@ -58,11 +58,11 @@ interface Options {
   /**
    * Button style
    */
-  style?: InteractionButtonOptions['style'],
+  style?: ButtonStyle,
   /**
    * Function which will run if the page changed. Only if second argument is not an array. 
    */
-  onPageChange?: (pageNumber: number, embed: MessageEmbed) => MessageEmbed | Promise<MessageEmbed>,
+  onPageChange?: (event: 'next' | 'previous' | string, embed: EmbedBuilder) => EmbedBuilder | Promise<EmbedBuilder>,
   /**
    * Message content
    */
@@ -70,7 +70,19 @@ interface Options {
   /**
    * Add custom components to render above the pagination buttons
    */
-  components?: MessageActionRow[],
+  components?: ActionRowBuilder<any>[],
+  /**
+   * Specifiy a restriction for pagination buttons
+   */
+  restriction?: 'ALL' | 'AUTHOR' | ((member: GuildMember) => boolean | Promise<boolean>),
+  /**
+   * Set a start index. Default index is 0
+   */
+  startIndex?: number,  
+  /**
+   * Send ephemeral response
+   */
+  ephemeral?: boolean
 }
 ```
 

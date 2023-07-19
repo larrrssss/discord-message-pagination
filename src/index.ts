@@ -72,7 +72,11 @@ export async function sendPaginatedEmbed(
 
   let message: Message;
   try {
-    const messageOptions = { ...buildMessageOptions(), fetchReply: true };
+    const messageOptions = { 
+      ...buildMessageOptions(), 
+      fetchReply: true,
+      ephemeral: options?.ephemeral ?? false,
+    };
     if (target instanceof CommandInteraction)
       message = (target.deferred
         ? await target.editReply(messageOptions) as Message
