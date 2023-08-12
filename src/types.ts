@@ -11,12 +11,17 @@ export enum RestrictionLevel {
   Author = 'AUTHOR',
 }
 
+export enum PageChangeEvent {
+  Previous = 'previous',
+  Next = 'next',
+}
+
 export type DynamicPaginationOptions = {
   /**
    * Function which will run if the page changed
    */
   onPageChange: (
-    event: 'next' | 'previous' | string,
+    event: PageChangeEvent,
     lastMessageOptions: BaseMessageOptions,
   ) => BaseMessageOptions | Promise<BaseMessageOptions>;
   /**

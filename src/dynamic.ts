@@ -18,7 +18,7 @@ import {
   nextButtonCustomId,
   previousButtonCustomId,
 } from './constants';
-import { DynamicPaginationOptions, RestrictionLevel } from './types';
+import { DynamicPaginationOptions, PageChangeEvent, RestrictionLevel } from './types';
 
 export const getNextButton = (
   data?: Partial<APIButtonComponent> | Partial<ButtonComponentData>,
@@ -114,7 +114,7 @@ export default async (
     await collectedInteraction.deferUpdate();
 
     const newMessagePayload = await options.onPageChange(
-      collectedInteraction.customId.split('_')[0],
+      collectedInteraction.customId.split('_')[1] as PageChangeEvent,
       payload,
     );
 
