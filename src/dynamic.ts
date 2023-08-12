@@ -92,8 +92,10 @@ export default async (
       ![previousButtonCustomId, nextButtonCustomId].includes(
         collectedInteraction.customId,
       )
-    )
+    ) {
+      options.onComponentInteraction?.(collectedInteraction);
       return;
+    }
 
     // Check restriction
     if (options?.restriction && options?.restriction !== RestrictionLevel.All) {

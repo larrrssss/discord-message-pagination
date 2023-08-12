@@ -4,6 +4,7 @@ import {
   ActionRowBuilder,
   ComponentEmojiResolvable,
   BaseMessageOptions,
+  CollectedInteraction,
 } from 'discord.js';
 
 export enum RestrictionLevel {
@@ -16,14 +17,7 @@ export enum PageChangeEvent {
   Next = 'next',
 }
 
-export type DynamicPaginationOptions = {
-  /**
-   * Function which will run if the page changed
-   */
-  onPageChange: (
-    event: PageChangeEvent,
-    lastMessageOptions: BaseMessageOptions,
-  ) => BaseMessageOptions | Promise<BaseMessageOptions>;
+type Options = {
   /**
    * How long the buttons will work (defaults to 10min)
    */
@@ -40,7 +34,21 @@ export type DynamicPaginationOptions = {
   ephemeral?: boolean;
 };
 
-export type StaticPaginationOptions = {
+export type DynamicPaginationOptions = Options & {
+  /**
+   * Function which will run if the page changed
+   */
+  onPageChange: (
+    event: PageChangeEvent,
+    lastMessageOptions: BaseMessageOptions,
+  ) => BaseMessageOptions | Promise<BaseMessageOptions>;
+  /**
+   * Function to handle component interaction except pagination buttons
+   */
+  onComponentInteraction?: (interaction: CollectedInteraction) => any;
+};
+
+export type StaticPaginationOptions = Options & {
   /**
    * Text to be displayed on next button
    */
@@ -58,10 +66,6 @@ export type StaticPaginationOptions = {
    */
   previousButtonEmoji?: ComponentEmojiResolvable;
   /**
-   * How long the buttons will work (defaults to 10min)
-   */
-  time?: number;
-  /**
    * Button style
    */
   style?: ButtonStyle;
@@ -74,17 +78,7 @@ export type StaticPaginationOptions = {
    */
   components?: ActionRowBuilder<any>[];
   /**
-   * Specifiy a restriction for pagination buttons
-   */
-  restriction?:
-    | RestrictionLevel
-    | ((member: GuildMember) => boolean | Promise<boolean>);
-  /**
    * Set a start index. Default index is 0
    */
   startIndex?: number;
-  /**
-   * Send ephemeral response
-   */
-  ephemeral?: boolean;
 };
