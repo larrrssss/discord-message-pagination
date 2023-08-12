@@ -18,7 +18,11 @@ import {
   nextButtonCustomId,
   previousButtonCustomId,
 } from './constants';
-import { DynamicPaginationOptions, PageChangeEvent, RestrictionLevel } from './types';
+import {
+  DynamicPaginationOptions,
+  PageChangeEvent,
+  RestrictionLevel,
+} from './types';
 
 export const getNextButton = (
   data?: Partial<APIButtonComponent> | Partial<ButtonComponentData>,
@@ -113,12 +117,14 @@ export default async (
       }
     }
 
-    await collectedInteraction.deferUpdate();
+    const newMessagePayload = await options.onPageChange({
+      event: collectedInteraction.customId.split('_')[1] as PageChangeEvent,
+      lastMessageOptions: payload,
+      interaction: collectedInteraction,
+    });
 
-    const newMessagePayload = await options.onPageChange(
-      collectedInteraction.customId.split('_')[1] as PageChangeEvent,
-      payload,
-    );
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    await collectedInteraction.deferUpdate().catch(() => {});
 
     await collectedInteraction.editReply(newMessagePayload);
   });

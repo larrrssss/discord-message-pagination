@@ -5,6 +5,7 @@ import {
   ComponentEmojiResolvable,
   BaseMessageOptions,
   CollectedInteraction,
+  ButtonInteraction,
 } from 'discord.js';
 
 export enum RestrictionLevel {
@@ -38,10 +39,11 @@ export type DynamicPaginationOptions = Options & {
   /**
    * Function which will run if the page changed
    */
-  onPageChange: (
-    event: PageChangeEvent,
-    lastMessageOptions: BaseMessageOptions,
-  ) => BaseMessageOptions | Promise<BaseMessageOptions>;
+  onPageChange: (data: {
+    event: PageChangeEvent;
+    lastMessageOptions: BaseMessageOptions;
+    interaction: ButtonInteraction;
+  }) => BaseMessageOptions | Promise<BaseMessageOptions>;
   /**
    * Function to handle component interaction except pagination buttons
    */
