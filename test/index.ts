@@ -1,7 +1,11 @@
 import 'dotenv/config';
-import { Client, EmbedBuilder } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, Client } from 'discord.js';
 
-import { sendPaginatedEmbed, Options } from '../src/index';
+import {
+  getNextButton,
+  getPreviousButton,
+  sendDynamicPagination,
+} from '../src/index';
 
 const client = new Client({ intents: ['Guilds'] });
 
@@ -10,24 +14,29 @@ client.on('ready', () => {
 });
 
 client.on('interactionCreate', async (interaction) => {
-  if (!interaction.isCommand())
-    return;
+  if (!interaction.isCommand()) return;
 
-  let i = 1;
-  const options = {
-    onPageChange: (event, embed) => {
-      i = event === 'next' 
-        ? i + 1 
-        : i - 1;
-      return embed.setTitle(`This is embed #${i}`);
+  sendDynamicPagination(
+    interaction,
+    {
+      content: 'Test Content',
+      components: [
+        new ActionRowBuilder<ButtonBuilder>().addComponents([
+          getPreviousButton({
+            disabled: true,
+            label: 'AHHH',
+          }),
+          getNextButton(),
+        ]),
+      ],
     },
-    time: 10 * 1000,
-  } as Options;
-
-  await sendPaginatedEmbed(
-    interaction, 
-    new EmbedBuilder().setTitle('My initial embed'), 
-    options,
+    {
+      onPageChange(event) {
+        return {
+          content: `Hello World ${event}`,
+        };
+      },
+    },
   );
 });
 
