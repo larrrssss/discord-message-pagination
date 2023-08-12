@@ -1,5 +1,4 @@
 import { 
-  CommandInteraction,
   GuildMember,
   InteractionCollector,
   Message,
@@ -10,6 +9,7 @@ import {
   ComponentType,
   TextChannel,
   User,
+  BaseInteraction,
 } from 'discord.js';
 
 import { Options } from './types';
@@ -18,18 +18,18 @@ import { Options } from './types';
 const defaultTimeout = 10 * 60 * 1000;
 
 export async function sendPaginatedEmbed(
-  target: CommandInteraction | TextChannel | User | GuildMember,
+  target: BaseInteraction | TextChannel | User | GuildMember,
   payload: EmbedBuilder | EmbedBuilder[],
   options?: Options,
 ): Promise<Message> {
   let i = options?.startIndex || 0;
   const buttonStyle = options?.style ?? ButtonStyle.Secondary;
-  const targetUserId = target instanceof CommandInteraction
+  const targetUserId = target instanceof BaseInteraction
     ? target.user.id
     : target.id;
 
-  if (target instanceof CommandInteraction && target.replied)
-    throw new Error('You already replied to this interaction');
+  if (target instanceof BaseInteraction && (!target.isRepliable() || target.replied))
+    throw new Error('Cannot reply to this interaction');
 
   if (!Array.isArray(payload) && !options?.onPageChange) 
     throw new Error('onPageChange should be defined if payload is not an array');
@@ -77,7 +77,7 @@ export async function sendPaginatedEmbed(
       fetchReply: true,
       ephemeral: options?.ephemeral ?? false,
     };
-    if (target instanceof CommandInteraction)
+    if (target instanceof BaseInteraction)
       message = (target.deferred
         ? await target.editReply(messageOptions) as Message
         : await target.reply(messageOptions)) as Message;
@@ -129,7 +129,7 @@ export async function sendPaginatedEmbed(
   });
 
   collector.on('end', async () => {
-    if (target instanceof CommandInteraction)
+    if (target instanceof BaseInteraction)
       await target.editReply({ components: options?.components ?? [] })
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         .catch(() => {});
