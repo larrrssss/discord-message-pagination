@@ -1,4 +1,4 @@
-import { GuildMember, ButtonStyle, ActionRowBuilder, EmbedBuilder } from 'discord.js';
+import { GuildMember, ButtonStyle, ActionRowBuilder, EmbedBuilder, ComponentEmojiResolvable } from 'discord.js';
 
 export interface Options {
   /**
@@ -6,9 +6,17 @@ export interface Options {
    */
   nextLabel?: string,
   /**
+   * Emoji to be displayed on next button
+   */
+  nextButtonEmoji?: ComponentEmojiResolvable,
+  /**
    * Text to be displayed on previous button
    */
   previousLabel?: string,
+  /**
+   * Emoji to be displayed on previous button
+   */
+  previousButtonEmoji?: ComponentEmojiResolvable,
   /**
    * How long the buttons will work (defaults to 10min)
    */

@@ -46,6 +46,9 @@ export async function sendPaginatedEmbed(
       .setCustomId('next_button')
       .setStyle(buttonStyle);
 
+    if (options?.nextButtonEmoji)
+      nextButton.setEmoji(options.nextButtonEmoji);
+
     if (Array.isArray(payload) && i === payload.length - 1) 
       nextButton.setDisabled(true);
 
@@ -53,6 +56,9 @@ export async function sendPaginatedEmbed(
       .setLabel(options?.previousLabel ?? '◀️')
       .setCustomId('previous_button')
       .setStyle(buttonStyle);
+
+    if (options?.previousButtonEmoji)
+      previousButton.setEmoji(options.previousButtonEmoji);
     
     if (Array.isArray(payload) && i === 0)
       previousButton.setDisabled(true);
