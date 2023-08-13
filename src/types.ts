@@ -47,7 +47,12 @@ export type DynamicPaginationOptions = Options & {
   /**
    * Function to handle component interaction except pagination buttons
    */
-  onComponentInteraction?: (interaction: CollectedInteraction) => any;
+  onComponentInteraction?: (
+    interaction: CollectedInteraction,
+    options: {
+      updatePagination: (messageOptions: BaseMessageOptions) => Promise<void>;
+    },
+  ) => any;
 };
 
 export type StaticPaginationOptions = Options & {

@@ -125,7 +125,14 @@ export default async (
 
       await collectedInteraction.editReply(newMessagePayload);
     } else {
-      options?.onComponentInteraction?.(collectedInteraction);
+      options?.onComponentInteraction?.(collectedInteraction, {
+        updatePagination: async (newMessagePayload) => {
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
+          await collectedInteraction.deferUpdate().catch(() => {});
+
+          await collectedInteraction.editReply(newMessagePayload);
+        },
+      });
     }
   });
 
