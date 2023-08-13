@@ -2,7 +2,6 @@ import {
   GuildMember,
   InteractionCollector,
   Message,
-  ComponentType,
   TextChannel,
   User,
   BaseInteraction,
@@ -86,47 +85,48 @@ export default async (
 
   const collector = new InteractionCollector(target.client, {
     message,
-    componentType: ComponentType.Button,
     time: options?.time ?? defaultCollectorTimeout,
   });
 
   collector.on('collect', async (collectedInteraction) => {
     if (
-      !collectedInteraction.isButton() ||
-      ![previousButtonCustomId, nextButtonCustomId].includes(
+      collectedInteraction.isButton() &&
+      [previousButtonCustomId, nextButtonCustomId].includes(
         collectedInteraction.customId,
       )
     ) {
-      options.onComponentInteraction?.(collectedInteraction);
-      return;
-    }
-
-    // Check restriction
-    if (options?.restriction && options?.restriction !== RestrictionLevel.All) {
+      // Check restriction
       if (
-        options.restriction === RestrictionLevel.Author &&
-        collectedInteraction.user.id !== targetUserId
-      )
-        return;
+        options?.restriction &&
+        options?.restriction !== RestrictionLevel.All
+      ) {
+        if (
+          options.restriction === RestrictionLevel.Author &&
+          collectedInteraction.user.id !== targetUserId
+        )
+          return;
 
-      if (typeof options.restriction === 'function') {
-        const result = await options.restriction(
-          collectedInteraction.member as GuildMember,
-        );
-        if (!result) return;
+        if (typeof options.restriction === 'function') {
+          const result = await options.restriction(
+            collectedInteraction.member as GuildMember,
+          );
+          if (!result) return;
+        }
       }
+
+      const newMessagePayload = await options.onPageChange({
+        event: collectedInteraction.customId.split('_')[1] as PageChangeEvent,
+        lastMessageOptions: payload,
+        interaction: collectedInteraction,
+      });
+
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      await collectedInteraction.deferUpdate().catch(() => {});
+
+      await collectedInteraction.editReply(newMessagePayload);
+    } else {
+      options?.onComponentInteraction?.(collectedInteraction);
     }
-
-    const newMessagePayload = await options.onPageChange({
-      event: collectedInteraction.customId.split('_')[1] as PageChangeEvent,
-      lastMessageOptions: payload,
-      interaction: collectedInteraction,
-    });
-
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    await collectedInteraction.deferUpdate().catch(() => {});
-
-    await collectedInteraction.editReply(newMessagePayload);
   });
 
   collector.on('end', async () => {
