@@ -1,6 +1,6 @@
 {
   "name": "discord-msg-pagination",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "A pagination utility for Messages in discord.js using message components",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
