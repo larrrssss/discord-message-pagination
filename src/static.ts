@@ -10,6 +10,7 @@ import {
   TextChannel,
   User,
   BaseInteraction,
+  CollectedInteraction,
 } from 'discord.js';
 
 import { defaultCollectorTimeout } from './constants';
@@ -19,7 +20,10 @@ export default async (
   target: BaseInteraction | TextChannel | User | GuildMember,
   payload: EmbedBuilder[],
   options?: StaticPaginationOptions,
-): Promise<Message> => {
+): Promise<{
+  message: Message;
+  collector: InteractionCollector<CollectedInteraction>;
+}> => {
   let i = options?.startIndex || 0;
   const buttonStyle = options?.style ?? ButtonStyle.Secondary;
   const targetUserId =
@@ -155,5 +159,8 @@ export default async (
         .catch(() => {});
   });
 
-  return message;
+  return {
+    message,
+    collector,
+  };
 };

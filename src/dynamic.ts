@@ -10,6 +10,7 @@ import {
   APIButtonComponent,
   ButtonStyle,
   ButtonComponentData,
+  CollectedInteraction,
 } from 'discord.js';
 
 import {
@@ -51,7 +52,10 @@ export default async (
   target: BaseInteraction | TextChannel | User | GuildMember,
   payload: BaseMessageOptions,
   options: DynamicPaginationOptions,
-): Promise<Message> => {
+): Promise<{
+  message: Message;
+  collector: InteractionCollector<CollectedInteraction>;
+}> => {
   const targetUserId =
     target instanceof BaseInteraction ? target.user.id : target.id;
 
@@ -149,5 +153,8 @@ export default async (
         .catch(() => {});
   });
 
-  return message;
+  return {
+    message,
+    collector,
+  };
 };
