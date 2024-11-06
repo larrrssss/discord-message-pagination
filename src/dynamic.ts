@@ -7,10 +7,9 @@ import {
   BaseInteraction,
   BaseMessageOptions,
   ButtonBuilder,
-  APIButtonComponent,
   ButtonStyle,
-  ButtonComponentData,
   CollectedInteraction,
+  APIButtonComponentBase,
 } from 'discord.js';
 
 import {
@@ -24,26 +23,31 @@ import {
   RestrictionLevel,
 } from './types';
 
-export const getNextButton = (
-  data?: Partial<APIButtonComponent> | Partial<ButtonComponentData>,
-): ButtonBuilder => {
+type PartialAPIButton = Partial<
+  APIButtonComponentBase<
+    | ButtonStyle.Danger
+    | ButtonStyle.Primary
+    | ButtonStyle.Success
+    | ButtonStyle.Secondary
+  >
+>;
+
+export const getNextButton = (data?: PartialAPIButton): ButtonBuilder => {
   const btn = new ButtonBuilder(data).setCustomId(nextButtonCustomId);
 
-  if (!btn.data.label) btn.setLabel('▶️');
+  if (!data?.label) btn.setLabel('▶️');
 
-  if (!btn.data.style) btn.setStyle(ButtonStyle.Secondary);
+  if (!data?.style) btn.setStyle(ButtonStyle.Secondary);
 
   return btn;
 };
 
-export const getPreviousButton = (
-  data?: Partial<APIButtonComponent> | Partial<ButtonComponentData>,
-): ButtonBuilder => {
+export const getPreviousButton = (data?: PartialAPIButton): ButtonBuilder => {
   const btn = new ButtonBuilder(data).setCustomId(previousButtonCustomId);
 
-  if (!btn.data.label) btn.setLabel('◀️');
+  if (!data?.label) btn.setLabel('◀️');
 
-  if (!btn.data.style) btn.setStyle(ButtonStyle.Secondary);
+  if (!data?.style) btn.setStyle(ButtonStyle.Secondary);
 
   return btn;
 };
